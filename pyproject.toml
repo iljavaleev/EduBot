@@ -1,0 +1,32 @@
+[tool.ruff]
+line-length = 79
+indent-width = 4
+target-version = "py311"
+fix = true
+
+select = [
+    "A",  # prevent using keywords that clobber python builtins
+    "B",  # bugbear: security warnings
+    "E",  # pycodestyle
+    "F",  # pyflakes
+    "N",  # pep8-naming
+    "I",  # isort
+    "W",  # Warning
+    "C",
+]
+
+ignore = [
+    "E712",  # Allow using if x == False, as it's not always equivalent to if x.
+    "A002",
+    "A003",  # Allow shawoding class attribute: django uses id.
+    "B904",  # Allow unchained exceptions: it's fine to raise 404 in django.
+    "B007",  # разобраться с dirpath, dirnames в test_admin_panel
+    "F401", # конфликт в apps
+    "F811",
+]
+
+fixable = ["ALL"]
+
+
+[tool.ruff.extend-per-file-ignores]
+"settings.py" = ["E501"]

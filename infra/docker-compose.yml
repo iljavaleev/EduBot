@@ -1,0 +1,147 @@
+version: '3.8'
+
+services:
+
+  swag:
+    image: linuxserver/swag:2.4.0
+    container_name: swag
+    cap_add:
+      - NET_ADMIN
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - URL=chatbothighed.sytes.net
+    env_file:
+      - ./.env
+    volumes:
+      - ./logs/nginx:/var/log/nginx/
+      - ./swag_nginx.conf:/config/nginx/site-confs/default.conf
+      - keys:/config/keys/
+      - static_value:/var/html/static/
+      - shared-data:/var/html/media/
+    ports:
+      - 443:443
+      - 81:80
+    restart: unless-stopped
+    networks:
+      - services
+    depends_on:
+      - bot
+
+  flower:
+    image: mher/flower
+    container_name: flower
+    ports:
+      - 5555:5555
+    environment:
+      - CELERY_BROKER_URL=amqp://guest:guest@rabbitmq:5672/
+    networks:
+      - services
+
+  rabbitmq:
+    image: rabbitmq:management
+    container_name: rabbitmq
+    restart: always
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    ports:
+      - 5672:5672
+      - 15672:15672
+    healthcheck:
+      test: rabbitmq-diagnostics -q check_running && rabbitmq-diagnostics -q check_local_alarms
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      - services
+
+  db:
+    image: postgres:13
+    restart: always
+    container_name: db
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    volumes:
+      - ./data/db:/var/lib/postgresql/data
+    ports:
+      - ${POSTGRES_PORT}:5432
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 3s
+      timeout: 3s
+      retries: 5
+      start_period: 3s
+    networks:
+      - services
+
+  django:
+    image: xaer981/admin_panel:main
+    container_name: admin_panel
+    env_file:
+      - ./.env
+    command: /bin/sh -c "./entrypoint.sh"
+    volumes:
+      - shared-data:/app/bot_media/
+      - static_value:/app/static/
+    ports:
+      - 8000:8000
+    depends_on:
+      db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - services
+
+  bot:
+    image: xaer981/bot:main
+    container_name: bot
+    restart: always
+    env_file:
+      - ./.env
+    volumes:
+      - shared-data:/app/bot_media/
+    ports:
+      - 8080:8080
+    depends_on:
+      - django
+    networks:
+      - services
+
+  celery:
+    image: xaer981/bot:main
+    container_name: celery_bot
+    restart: always
+    env_file:
+      - ./.env
+    volumes:
+      - shared-data:/app/bot_media/
+    command: celery -A worker.celery worker -l INFO -Q tasks,demo_week
+    depends_on:
+      - bot
+    networks:
+      - services
+
+  django-celery-beat:
+    image: xaer981/admin_panel:main
+    container_name: django_celery_bot_beat
+    restart: always
+    env_file:
+      - ./.env
+    command: celery -A admin_panel.celery_config beat -l debug --scheduler django_celery_beat.schedulers:DatabaseScheduler
+    networks:
+      - services
+    depends_on:
+      - bot
+      - db
+
+volumes:
+  shared-data:
+  static_value:
+  keys:
+  rabbitmq_data:
+
+networks:
+  services:

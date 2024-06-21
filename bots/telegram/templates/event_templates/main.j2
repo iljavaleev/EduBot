@@ -1,0 +1,26 @@
+{% if event_list_next %}
+_*Список текущих активных мероприятий*_
+{%- elif event_list_past -%}
+_*Список прошедших мероприятий*_
+{%- endif -%}
+
+{% if event_next %}
+<u>{{ event_next.title }}</u>
+
+{{ event_next.description }}
+
+Мероприятие будет проходить {{ event_next.date.date().strftime('%d.%m.%Y') }} в {{ event_next.date.time().strftime('%H:%M') }}
+{%- endif -%}
+
+{% if event_previous %}
+Событие <u>"{{ event_previous.title }}"</u> проходило {{ event_previous.date.date().strftime('%d.%m.%Y') }}
+
+<u>Краткая информация о событии:</u>
+{{ event_previous.description }}
+
+Ссылка на видео <a href="{{ event_previous.stream_link }}">тут</a>
+{%- endif -%}
+
+{%- if button_event -%}
+• {{ button_event.title }}: {{ button_event.date.date().strftime('%d.%m.%Y')  }}
+{%- endif -%}

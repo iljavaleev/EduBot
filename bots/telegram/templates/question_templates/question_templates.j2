@@ -1,0 +1,13 @@
+{% if state == 'start' %}
+_*Мы с радостью ответим на ваши вопросы*_
+{%- endif -%}
+
+{% if button == 'FAQ' -%}
+FAQ
+{%- elif button == 'GPT' -%}
+Задать вопрос Yandex GPT
+{%- elif button == 'CURATOR' -%}
+Задать вопрос куратору
+{%- elif button == 'DEMO_WEEK' -%}
+Рассылка "Демо-неделя"
+{%- endif -%}

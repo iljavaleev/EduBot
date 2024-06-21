@@ -1,0 +1,16 @@
+Metadata-Version: 2.0
+Name: watchdog-gevent
+Version: 0.1.1
+Summary: A gevent-based observer for watchdog.
+Home-page: UNKNOWN
+Author: Bogdan Popa
+Author-email: bogdan@defn.io
+License: UNKNOWN
+Description-Content-Type: UNKNOWN
+Platform: UNKNOWN
+Requires-Dist: gevent (>=1.1)
+Requires-Dist: watchdog (>=0.8)
+
+Visit https://github.com/Bogdanp/watchdog_gevent for more information.
+
+

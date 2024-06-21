@@ -1,0 +1,37 @@
+{% if state == 'article_start' -%}
+🗞 *Добро пожаловать в библиотеку\!*
+{%- elif state == 'already_in' -%}
+Вы уже подписаны на рассылку материалов
+{%- elif state == 'already_out' -%}
+Вы не подписаны на рассылку материалов
+{%- elif state == 'success_in' -%}
+🎉 Вы подписались на рассылку материалов!
+{%- elif state == 'success_out' -%}
+👋 Вы больше не будете получать рассылку материалов
+{%- elif state == 'archive' -%}
+🗄 Архив статей
+{%- endif -%}
+
+{%- if button == 'subscribe_article' -%}
+🔔Подписаться на рассылку материалов
+{%- elif button == 'unsubscribe_article' -%}
+🔕Отписаться от рассылки материалов
+{%- elif button == 'view_article' -%}
+🗄 Архив статей
+{%- endif -%}
+
+{%- if callback == 'subscribe_article' -%}
+subscribe_article
+{%- elif callback == 'unsubscribe_article' -%}
+unsubscribe_article
+{%- elif callback == 'view_article' -%}
+view_article
+{%- elif callback == 'next_page' -%}
+next_page
+{%- elif callback == 'previous_page' -%}
+previous_page
+{%- endif -%}
+
+{%- if button_article -%}
+• {{ button_article.title }}
+{%- endif -%}
