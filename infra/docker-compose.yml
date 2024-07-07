@@ -10,7 +10,7 @@ services:
     environment:
       - PUID=1000
       - PGID=1000
-      - URL=chatbothighed.sytes.net
+      - URL=${WEB_SERVER_URL}
     env_file:
       - ./.env
     volumes:
@@ -27,16 +27,6 @@ services:
       - services
     depends_on:
       - bot
-
-  flower:
-    image: mher/flower
-    container_name: flower
-    ports:
-      - 5555:5555
-    environment:
-      - CELERY_BROKER_URL=amqp://guest:guest@rabbitmq:5672/
-    networks:
-      - services
 
   rabbitmq:
     image: rabbitmq:management
@@ -77,7 +67,7 @@ services:
       - services
 
   django:
-    image: xaer981/admin_panel:main
+    image: valeevilja/admin_panel
     container_name: admin_panel
     env_file:
       - ./.env
@@ -96,7 +86,7 @@ services:
       - services
 
   bot:
-    image: xaer981/bot:main
+    image: valeevilja/edubot
     container_name: bot
     restart: always
     env_file:
@@ -111,7 +101,7 @@ services:
       - services
 
   celery:
-    image: xaer981/bot:main
+    image: valeevilja/edubot
     container_name: celery_bot
     restart: always
     env_file:
@@ -125,7 +115,7 @@ services:
       - services
 
   django-celery-beat:
-    image: xaer981/admin_panel:main
+    image: valeevilja/admin_panel
     container_name: django_celery_bot_beat
     restart: always
     env_file:
