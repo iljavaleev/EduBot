@@ -67,7 +67,7 @@ services:
       - services
 
   django:
-    image: valeevilja/admin_panel
+    image: valeevilja/admin_panel:latest
     container_name: admin_panel
     env_file:
       - ./.env
@@ -86,7 +86,7 @@ services:
       - services
 
   bot:
-    image: valeevilja/edubot
+    image: valeevilja/edubot:latest
     container_name: bot
     restart: always
     env_file:
@@ -101,7 +101,7 @@ services:
       - services
 
   celery:
-    image: valeevilja/edubot
+    image: valeevilja/edubot:latest
     container_name: celery_bot
     restart: always
     env_file:
@@ -115,7 +115,7 @@ services:
       - services
 
   django-celery-beat:
-    image: valeevilja/admin_panel
+    image: valeevilja/admin_panel:latest
     container_name: django_celery_bot_beat
     restart: always
     env_file:
