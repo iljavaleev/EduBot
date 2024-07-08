@@ -123,8 +123,8 @@ jobs:
             echo ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS }} >> .env
             echo CSRF_TRUSTED_ORIGINS=${{ secrets.CSRF_TRUSTED_ORIGINS }} >> .env
             sudo docker-compose down
-            sudo docker pull --quiet ${{ secrets.DOCKERHUB_USERNAME }}/admin_panel
-            sudo docker pull --quiet ${{ secrets.DOCKERHUB_USERNAME }}/edubot
+            sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/admin_panel
+            sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/edubot
             sudo docker-compose up -d --build
             sudo docker-compose exec django python manage.py collectstatic --no-input
             sudo docker system prune -af
