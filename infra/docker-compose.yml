@@ -21,7 +21,7 @@ services:
       - shared-data:/var/html/media/
     ports:
       - 443:443
-      - 81:80
+      - 80:80
     restart: unless-stopped
     networks:
       - services
