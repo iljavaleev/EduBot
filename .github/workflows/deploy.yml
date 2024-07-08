@@ -122,11 +122,11 @@ jobs:
             echo WEB_SERVER_URL=${{ secrets.WEB_SERVER_URL }} >> .env
             echo ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS }} >> .env
             echo CSRF_TRUSTED_ORIGINS=${{ secrets.CSRF_TRUSTED_ORIGINS }} >> .env
-            sudo docker compose stop django
-            sudo docker compose stop bot
-            sudo docker compose stop celery
+            sudo docker-compose stop django
+            sudo docker-compose stop bot
+            sudo docker-compose stop celery
             sudo docker pull --quiet ${{ secrets.DOCKERHUB_USERNAME }}/admin_panel:main
             sudo docker pull --quiet ${{ secrets.DOCKERHUB_USERNAME }}/edubot:main
-            sudo docker compose up -d
+            sudo docker-compose up -d --build
             sudo docker system prune -af
-            sudo docker compose exec django python manage.py collectstatic --no-input
+            sudo docker-compose exec django python manage.py collectstatic --no-input
