@@ -67,7 +67,7 @@ services:
       - services
 
   django:
-    platform: linux/amd64
+    platform: linux/arm64
     image: valeevilja/admin_panel:latest
     container_name: admin_panel
     env_file:
@@ -87,7 +87,7 @@ services:
       - services
 
   bot:
-    platform: linux/amd64
+    platform: linux/arm64
     image: valeevilja/edubot:latest
     container_name: bot
     restart: always
@@ -103,7 +103,7 @@ services:
       - services
 
   celery:
-    platform: linux/amd64
+    platform: linux/arm64
     image: valeevilja/edubot:latest
     container_name: celery_bot
     restart: always
@@ -118,7 +118,7 @@ services:
       - services
 
   django-celery-beat:
-    platform: linux/amd64
+    platform: linux/arm64
     image: valeevilja/admin_panel:latest
     container_name: django_celery_bot_beat
     restart: always

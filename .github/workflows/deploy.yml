@@ -47,9 +47,9 @@ jobs:
     strategy:
       matrix:
         include:
-          - image_name: valeevilja/admin_panel
+          - image_name: valeevilja/admin_panel:latest
             dockerfile: admin_panel/Dockerfile
-          - image_name: valeevilja/edubot
+          - image_name: valeevilja/edubot:latest
             dockerfile: bots/telegram/Dockerfile
     steps:
       - name: Set up Docker Buildx
@@ -123,8 +123,8 @@ jobs:
             echo ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS }} >> .env
             echo CSRF_TRUSTED_ORIGINS=${{ secrets.CSRF_TRUSTED_ORIGINS }} >> .env
             sudo docker-compose down
-            sudo docker pull --quiet ${{ secrets.DOCKERHUB_USERNAME }}/admin_panel:main
-            sudo docker pull --quiet ${{ secrets.DOCKERHUB_USERNAME }}/edubot:main
+            sudo docker pull --quiet ${{ secrets.DOCKERHUB_USERNAME }}/admin_panel:latest
+            sudo docker pull --quiet ${{ secrets.DOCKERHUB_USERNAME }}/edubot:latest
             sudo docker-compose up -d --build
             sudo docker-compose exec django python manage.py collectstatic --no-input
             sudo docker system prune -af
