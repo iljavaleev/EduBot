@@ -134,6 +134,6 @@ class Test(Dev):
 class Prod(Dev):
     DEBUG = values.BooleanValue(False)
     allowed_hosts: str = os.environ.get("ALLOWED_HOSTS")
-    ALLOWED_HOSTS = allowed_hosts.split()
+    ALLOWED_HOSTS = allowed_hosts.split() if allowed_hosts else "ALLOWED_HOSTS"
     allowed_csrf: str = os.environ.get("CSRF_TRUSTED_ORIGINS")
-    CSRF_TRUSTED_ORIGINS = allowed_csrf.split()
+    CSRF_TRUSTED_ORIGINS = allowed_csrf.split() if allowed_hosts else "CSRF_TRUSTED_ORIGINS"
