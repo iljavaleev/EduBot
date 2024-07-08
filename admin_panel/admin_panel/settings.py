@@ -133,23 +133,7 @@ class Test(Dev):
 
 class Prod(Dev):
     DEBUG = values.BooleanValue(False)
-
-    ALLOWED_HOSTS = os.getenv(
-        'ALLOWED_HOSTS',
-        default=('0.0.0.0 '
-                 'localhost '
-                 'host.docker.internal '
-                 '127.0.0.1 '
-                 '158.160.127.29 '
-                 'chatbothighed.sytes.net').split()
-    )
-
-    CSRF_TRUSTED_ORIGINS = os.getenv(
-        'CSRF_TRUSTED_ORIGINS',
-        default=('http://0.0.0.0 '
-                 'http://localhost '
-                 'http://host.docker.internal '
-                 'http://127.0.0.1 '
-                 'http://158.160.127.29 '
-                 'https://chatbothighed.sytes.net').split()
-    )
+    allowed_hosts: str = os.environ.get("ALLOWED_HOSTS")
+    ALLOWED_HOSTS = allowed_hosts.split()
+    allowed_csrf: str = os.environ.get("CSRF_TRUSTED_ORIGINS")
+    CSRF_TRUSTED_ORIGINS = allowed_csrf.split()

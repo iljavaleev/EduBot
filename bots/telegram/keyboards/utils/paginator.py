@@ -1,4 +1,3 @@
-import logging
 from typing import Any
 
 from aiogram import F, Router, types
@@ -26,7 +25,6 @@ class Paginator:
                 it=data.inline_keyboard,
                 size=self.size
             )
-            logging.error(self.list_kb)
         elif isinstance(data, InlineKeyboardBuilder):
             self.list_kb = self.chunk(
                 it=data.export(),
