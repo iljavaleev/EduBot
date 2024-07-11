@@ -147,5 +147,7 @@ dmypy.json
 !/infra/docker-compose.yml
 !/infra/nginx-local.conf
 !/infra/swag_nginx.conf
-/infra/
+/infra/bot_media
+/infra/logs
+/infra/data
 /data/

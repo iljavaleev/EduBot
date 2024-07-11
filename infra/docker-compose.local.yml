@@ -1,0 +1,145 @@
+version: '3.8'
+
+services:
+  admin:
+    image: nginx:latest
+    environment:
+      - TARGET_PORT=8080
+    volumes:
+      - ./nginx-local.conf:/etc/nginx/templates/default.conf.template
+      - static_value:/var/html/static/
+      - shared-data:/var/html/media/
+    ports:
+      - 443:443
+      - 80:80
+    networks:
+      - services
+    depends_on:
+      - bot
+      - db
+
+  flower:
+    image: mher/flower
+    container_name: flower
+    ports:
+      - 5555:5555
+    environment:
+      - CELERY_BROKER_URL=amqp://guest:guest@rabbitmq:5672/
+    networks:
+      - services
+
+  rabbitmq:
+    image: rabbitmq:management
+    container_name: rabbitmq
+    restart: always
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    ports:
+      - 5672:5672
+      - 15672:15672
+    networks:
+      - services
+
+  ngrok:
+    image: ngrok/ngrok:3
+    container_name: ngrok
+    command: http host.docker.internal:8080 --domain=${NGROK_URL}
+    environment:
+      - NGROK_AUTHTOKEN=${NGROK_AUTHTOKEN}
+    ports:
+      - "4040:4040"
+    env_file: ../.env
+    networks:
+      - services
+
+  db:
+    image: postgres:13
+    restart: always
+    container_name: db
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    volumes:
+      - ./data/db:/var/lib/postgresql/data
+    ports:
+      - ${POSTGRES_PORT}:5432
+    networks:
+      - services
+
+  django:
+    build:
+      context: ../
+      dockerfile: admin_panel/Dockerfile
+    container_name: admin_panel
+    env_file:
+      - ../.env
+    restart: always
+    command: /bin/sh -c "./entrypoint.sh"
+    volumes:
+      - shared-data:/app/bot_media/
+      - static_value:/app/static/
+    ports:
+      - 8000:8000
+    depends_on:
+      - db
+      - rabbitmq
+    networks:
+      - services
+
+  bot:
+    build:
+      context: ../
+      dockerfile: bots/telegram/Dockerfile
+    container_name: bot
+    restart: always
+    env_file:
+      - ../.env
+    volumes:
+      - shared-data:/app/bot_media/
+    ports:
+      - 8080:8080
+    depends_on:
+      - django
+    networks:
+      - services
+
+  celery:
+    build:
+      context: ../
+      dockerfile: bots/telegram/Dockerfile
+    container_name: celery_bot
+    restart: always
+    env_file:
+      - ../.env
+    volumes:
+      - shared-data:/app/bot_media/
+    command: celery -A worker.celery worker -l INFO -Q tasks,demo_week
+    depends_on:
+      - bot
+    networks:
+      - services
+
+  django-celery-beat:
+    container_name: django_celery_bot_beat
+    restart: always
+    build:
+      context: ../
+      dockerfile: admin_panel/Dockerfile
+    env_file:
+      - ../.env
+    command: celery -A admin_panel.celery_config beat -l debug --scheduler django_celery_beat.schedulers:DatabaseScheduler
+    networks:
+      - services
+    depends_on:
+      - bot
+      - db
+
+volumes:
+  shared-data:
+  static_value:
+  keys:
+  rabbitmq_data:
+
+networks:
+  services:
