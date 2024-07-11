@@ -143,9 +143,9 @@ dmypy.json
 **/migrations/**
 !**/migrations
 !**/migrations/__init__.py
-/infra/
 !/infra/docker-compose.local.yml
 !/infra/docker-compose.yml
 !/infra/nginx-local.conf
 !/infra/swag_nginx.conf
+/infra/
 /data/
